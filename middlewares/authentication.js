@@ -16,12 +16,10 @@ const authentication = async (req, res, next) => {
 
     console.log(decode, "<< decode token");
 
-    const user = await User.findOne({
-      where: {
-        id: decode.id,
-        email: decode.email,
-      },
-    });
+    const user = await User.findOne(
+        decode.id,
+        decode.email,
+    );
 
     if (!user) {
       throw {
@@ -38,6 +36,7 @@ const authentication = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log(error);
     res.status(error?.code || 500).json(error);
   }
 };
