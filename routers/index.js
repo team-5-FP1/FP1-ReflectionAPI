@@ -5,7 +5,7 @@ const authentication = require("../middlewares/authentication");
 
 router.use("/users", userRouters);
 
-// router.use(authentication);
+router.use(authentication);
 
 router.use("/reflections", reflectionRouters);
 

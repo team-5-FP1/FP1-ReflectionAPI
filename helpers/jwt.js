@@ -6,7 +6,7 @@ const generateToken = (payload) => {
 };
 
 const verifyToken = (token) => {
-  return jwt.verify(token, SECRET_KEY);
+  return jwt.verify(token, SECRET_KEY, { maxAge: "1h" });
 };
 
 module.exports = {

@@ -1,55 +1,56 @@
-const { comparePassword, hashPassword } = require("../helpers/bcrypt");
 const { generateToken } = require("../helpers/jwt");
-const db = require('../config/config')
+const { User } = require("../models");
 
 class UserController {
   static async register(req, res) {
     try {
-      const { email, password } = req.body
-      let hashedPassword = hashPassword(password)
-      
-       db.query("INSERT INTO users (email, password) VALUES ($1, $2)", [email, hashedPassword])
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        throw {
+          status: 400,
+          message: "Email and password are required",
+        };
+      }
+
+      if (password.length < 6) {
+        throw {
+          status: 400,
+          message: "Password must be at least 6 characters long",
+        };
+      }
+
+      const data = await User.register(email, password);
 
       const response = {
-        email: email,
-        password: password,
-      }
+        id: data.id,
+        email: data.email,
+      };
 
-    res.status(201).json(response)
+      const token = generateToken({ email: data.email });
+      response.token = token;
+
+      res.status(201).json(response);
     } catch (error) {
-      res.status(400).json(error)
-      console.log(error)
+      console.log(error);
+      res.status(error.status || 500).json({ message: error.message });
     }
   }
-
   static async login(req, res) {
+    const { email, password } = req.body;
+
     try {
-      const { email, password } = req.body
+      const user = await User.login(email, password);
 
-      const data = await db.query("SELECT * FROM users WHERE email = $1", [email])
+      const payload = { id: user.id, email: user.email };
+      const access_token = generateToken(payload);
 
-      if(data.rowCount === 0) {
-        throw res.status(404).json("Email tidak terdaftar")
-      }
-
-      let passwordResponse = comparePassword(password, data.rows[0].password)    
-      if(passwordResponse) {
-          const payload = {
-            id: data.rows[0].id,
-            email: data.rows[0].email
-          }
-          
-          const token = await generateToken(payload)
-          return res.status(200).json({
-            pesan: "Login berhasil",
-            token: token
-          })
-
-        }
-      
+      res.status(200).json({ access_token });
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      res.status(error.status || 500).json({ message: error.message });
     }
   }
 }
+
 module.exports = UserController;
