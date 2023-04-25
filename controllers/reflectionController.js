@@ -1,9 +1,41 @@
 const { Reflection } = require("../models");
 
 class ReflectionController {
-  static async createReflection(req, res) {}
+  static async createReflection(req, res) {
+    try {
+      const { success, low_point, take_away } = req.body
+      
+      const data = await Reflection.createReflection(success, low_point, take_away)
 
-  static async getReflectionByID(req, res) {}
+      const response = {
+        success: data.success,
+        low_point: data.low_point,
+        take_away: data.take_away
+      }
+
+      res.status(200).json(response)
+    } catch (error) {
+      res.status(400).json(error)
+    }
+  }
+
+  static async getReflectionByID(req, res) {
+    try {
+      const reflection_id = req.params
+      console.log(reflection_id);
+
+      const data = await Reflection.getReflectionByID(reflection_id)
+
+      const response = {
+        id: data.id
+      }
+      res.status(200).json(response)
+
+
+    } catch (error) {
+      res.status(400).json(error)
+    }
+  }
 
   static async updateReflectionByID(req, res) {
 
