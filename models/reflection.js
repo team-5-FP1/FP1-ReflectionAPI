@@ -15,17 +15,18 @@ class Reflection {
 
     }
 
-    static async createReflection(success, low_point, take_away) {
-
+    static async createReflection(success, low_point, take_away, userid) {
+        
         const query = {
-            text: "INSERT INTO reflections(success, low_point, take_away) VALUES($1, $2, $3) returning *",
-            values: [success, low_point, take_away]
+            text: "INSERT INTO reflections(success, low_point, take_away, userid ) VALUES($1, $2, $3, $4) returning *",
+            values: [success, low_point, take_away, userid]
         }
         console.log(query)
 
         const { rows } = await pool.query(query)
         return rows[0]
     }
+
     static async getReflectionByID(reflection_id) {
         const query = {
             text: "SELECT * FROM reflections WHERE id = $1",

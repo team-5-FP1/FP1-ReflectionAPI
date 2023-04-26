@@ -4,8 +4,8 @@ class ReflectionController {
   static async createReflection(req, res) {
     try {
       const { success, low_point, take_away } = req.body
-      
-      const data = await Reflection.createReflection(success, low_point, take_away)
+      const userid = req.UserData.id
+      const data = await Reflection.createReflection(success, low_point, take_away, userid)
 
       const response = {
         success: data.success,
@@ -21,15 +21,17 @@ class ReflectionController {
 
   static async getReflectionByID(req, res) {
     try {
-      const reflection_id = req.params
-      console.log(reflection_id);
+      const reflection_id = req.params.id
 
       const data = await Reflection.getReflectionByID(reflection_id)
+      // const response = {
+      //   id: data.id,
+      //   success: data.success,
+      //   low_point: data.low_point,
+      //   take_away: data.take_away
 
-      const response = {
-        id: data.id
-      }
-      res.status(200).json(response)
+      // }
+      res.status(200).json(data)
 
 
     } catch (error) {
