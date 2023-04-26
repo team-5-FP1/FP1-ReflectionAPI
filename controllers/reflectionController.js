@@ -49,8 +49,6 @@ class ReflectionController {
 
       const reflection_id = req.params.id
 
-      const userid = req.UserData.id
-
       if (!success || !low_point || !take_away) {
         throw {
           status : 400,
@@ -58,7 +56,7 @@ class ReflectionController {
         }
       }
 
-      const data = await Reflection.updateReflectionByID(success, low_point, take_away, reflection_id, userid);
+      const data = await Reflection.updateReflectionByID(success, low_point, take_away, reflection_id);
 
       const response = {
         id : data.id,
@@ -79,6 +77,22 @@ class ReflectionController {
 
   }
 
-  static async deleteReflectionByID(req, res) {}
+  static async deleteReflectionByID(req, res) {
+
+    try {
+      
+      const reflection_id = req.params.id
+
+      await Reflection.deleteReflectionByID(reflection_id)
+
+      res.status(201).json({
+        message : "success delete reflection"
+      })
+
+    } catch (error) {
+      res.status(error.status || 500).json({ message: error.message });
+    }
+
+  }
 }
 module.exports = ReflectionController;

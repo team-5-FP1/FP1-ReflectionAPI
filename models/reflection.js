@@ -2,12 +2,12 @@ const pool = require("../config/config");
 
 class Reflection {
 
-    static async updateReflectionByID(success, low_point, take_away, reflection_id, userid)
+    static async updateReflectionByID(success, low_point, take_away, reflection_id)
     {
         
         const query = {
-         text : `update reflections set success = $1, low_point = $2, take_away = $3 where id = $4 and userid = $5 returning *`,  
-         values : [success, low_point, take_away, reflection_id, userid]  
+         text : `update reflections set success = $1, low_point = $2, take_away = $3 where id = $4 returning *`,  
+         values : [success, low_point, take_away, reflection_id]  
         }
         
         const { rows } = await pool.query(query)
@@ -35,6 +35,22 @@ class Reflection {
 
         const { rows } = await pool.query(query)
         return rows[0]
+    }
+
+    static async deleteReflectionByID(reflection_id){
+
+        const query = {
+            text: "delete from reflections where id = $1",
+            values : [reflection_id]
+        }
+
+        const rows = await pool.query(query)
+
+        if (rows.rowCount === 0) {
+            const error = new Error(`Reflection with ID ${reflection_id} not found.`)
+            error.status = 404
+            throw error
+        }
     }
 
 }
