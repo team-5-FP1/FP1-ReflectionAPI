@@ -35,17 +35,16 @@ class User {
     return user;
   }
 
-  static async findOne(id, email)
-  {
+  static async findOne(id, email) {
     const query = {
-      text : "select * from users where id = $1 and email = $2",
-      values : [id, email]
-    }
+      text: "select * from users where id = $1 and email = $2",
+      values: [id, email],
+    };
 
-    const { rows } = await pool.query(query)
-    const user = rows[0]
+    const { rows } = await pool.query(query);
+    const user = rows[0];
 
-    return user
+    return user;
   }
 }
 

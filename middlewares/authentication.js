@@ -16,10 +16,7 @@ const authentication = async (req, res, next) => {
 
     console.log(decode, "<< decode token");
 
-    const user = await User.findOne(
-        decode.id,
-        decode.email,
-    );
+    const user = await User.findOne(decode.id, decode.email);
 
     if (!user) {
       throw {
